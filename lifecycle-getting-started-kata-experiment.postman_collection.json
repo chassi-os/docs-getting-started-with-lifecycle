@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "70da3208-af4d-4df0-9a3c-ed7141c08e90",
+		"name": "lifecycle-getting-started-kata-experiment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01-Get Lifecycle Details",
+			"item": [
+				{
+					"name": "Get the Lifecycle ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bb85a1a-a10e-4c05-a472-ed8f153155d7",
+								"exec": [
+									"const lifecycles = pm.response.json();",
+									"const lifecycleName = pm.environment.get('lifecycleName');",
+									"const lifecycle = lifecycles.find(lifecycle => lifecycle.lifecycleName === lifecycleName);",
+									"const found = !!lifecycle;",
+									"",
+									"pm.test(`${found ? 'Found lifecycle : ' + lifecycle.lifecycleId : `Failed to find the lifecycle named ${lifecycleName}`}`, () => {",
+									"    pm.expect(found, `Lifecycle named '${lifecycleName}' could not be found in the list of lifecycles`).to.be.true;",
+									"});",
+									"",
+									"if(!found) return;",
+									"",
+									"const { lifecycleId, lifecycleVersions } = lifecycle; ",
+									"",
+									"const exists = lifecycleVersions && lifecycleVersions.length > 0 && !!lifecycleVersions.find(v => v.published);",
+									"",
+									"pm.test(exists ? 'A published lifecycle version is available to use' : 'Failed to find a published lifecycle version', () => {",
+									"    pm.expect(exists, `There are no published lifecycles for ${lifecycleName}, please publish one and retry`).to.be.true",
+									"});",
+									"",
+									"if(!exists) return; ",
+									"",
+									"",
+									"const { versionNo, steps } = lifecycleVersions.sort((a,b) => b.publicationDate.localeCompare(a.publicationDate)).shift();",
+									"",
+									"pm.environment.set('lifecycleId', lifecycleId);",
+									"pm.environment.set('versionNo', versionNo);",
+									"",
+									"",
+									"const stepName = pm.environment.get('stepName');",
+									"const step = steps.find(step => step.stepName === stepName);",
+									"",
+									"const hasWantedStep = !!step;",
+									"",
+									"pm.test(`${hasWantedStep ? `Found step: ${stepName}` : `Failed to find the step named ${stepName}`}`, () => {",
+									"    pm.expect(hasWantedStep, `Step named '${stepName}' could not be found in the list of steps`).to.be.true;",
+									"});",
+									"",
+									"if(!hasWantedStep) return; ",
+									"",
+									"",
+									"pm.environment.set('stepId', step.stepId);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/lifecycle/1/lifecycles",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"lifecycle",
+								"1",
+								"lifecycles"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02-Track an Entity",
+			"item": [
+				{
+					"name": "Create a new Entity Lifecycle (Start Tracking)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1ff0a23b-a681-4ca3-b854-31ee90b30a42",
+								"exec": [
+									"const bodyToPost = {",
+									"    \"lifecycleId\": pm.environment.get('lifecycleId'),",
+									"    \"versionNo\": pm.environment.get('versionNo'),",
+									"    \"externalCustomerId\": pm.environment.get('externalCustomerId')",
+									"};",
+									"pm.variables.set(\"jsonBody\", JSON.stringify(bodyToPost));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{jsonBody}}\n"
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/lifecycle/1/entitylifecycles",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"lifecycle",
+								"1",
+								"entitylifecycles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Entity Lifecycle by External Customer ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1ff0a23b-a681-4ca3-b854-31ee90b30a42",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c9379a15-1566-4c04-a520-5133b61032d5",
+								"exec": [
+									"const entityList = pm.response.json();",
+									"const lifecycleId = pm.environment.get('lifecycleId');",
+									"const entityLifecycle = entityList.find(entity => entity.lifecycleId === lifecycleId);",
+									"const found = !!entityLifecycle;",
+									"",
+									"pm.test(`${found ? `Found entity lifecycle: ${entityLifecycle.entityLifecycleId}`: 'Failed to find an entity lifecycle'}`, () => {",
+									"    pm.expect(found, 'An entity lifecycle is required, check the previous POST to confirm its success').to.be.true;",
+									"})",
+									"",
+									"if(!found) return;",
+									"",
+									"",
+									"pm.environment.set('entityLifecycleId', entityLifecycle.entityLifecycleId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/lifecycle/1/entitylifecycles?externalCustomerIds[]={{externalCustomerId}}",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"lifecycle",
+								"1",
+								"entitylifecycles"
+							],
+							"query": [
+								{
+									"key": "externalCustomerIds[]",
+									"value": "{{externalCustomerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Attach Entity Lifecycle to Customer as a Customer Journey",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1ff0a23b-a681-4ca3-b854-31ee90b30a42",
+								"exec": [
+									"const bodyToPost = {",
+									"    \"customerId\": pm.environment.get(\"chassiCustomerId\"),",
+									"    \"entityLifecycleId\": pm.environment.get(\"entityLifecycleId\"),",
+									"};",
+									"pm.variables.set(\"jsonBody\", JSON.stringify(bodyToPost));",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{jsonBody}}\n"
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/customer/1/customers/{{chassiCustomerId}}/journeys",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"customer",
+								"1",
+								"customers",
+								"{{chassiCustomerId}}",
+								"journeys"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03-Change Entity Lifecycle's Step",
+			"item": [
+				{
+					"name": "Get Entity Lifecycle by External Customer ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1ff0a23b-a681-4ca3-b854-31ee90b30a42",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "c9379a15-1566-4c04-a520-5133b61032d5",
+								"exec": [
+									"const entityList = pm.response.json();",
+									"const lifecycleId = pm.environment.get('lifecycleId');",
+									"const entityLifecycle = entityList.find(entity => entity.lifecycleId === lifecycleId);",
+									"const found = !!entityLifecycle;",
+									"",
+									"pm.test(`${found ? `Found entity lifecycle: ${entityLifecycle.entityLifecycleId}`: 'Failed to find an entity lifecycle'}`, () => {",
+									"    pm.expect(found, 'An entity lifecycle is required, check the previous POST to confirm its success').to.be.true;",
+									"})",
+									"",
+									"if(!found) return;",
+									"",
+									"pm.environment.set('entityLifecycleId', entityLifecycle.entityLifecycleId);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/lifecycle/1/entitylifecycles?externalCustomerIds[]={{externalCustomerId}}",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"lifecycle",
+								"1",
+								"entitylifecycles"
+							],
+							"query": [
+								{
+									"key": "externalCustomerIds[]",
+									"value": "{{externalCustomerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Entity Lifecycle Step Change",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "1ff0a23b-a681-4ca3-b854-31ee90b30a42",
+								"exec": [
+									"const bodyToPost = {",
+									"    \"lifecycleId\": pm.environment.get(\"lifecycleId\"),",
+									"    \"currentStepId\": pm.environment.get(\"stepId\"),",
+									"    \"versionNo\": pm.environment.get('versionNo')",
+									"};",
+									"",
+									"pm.variables.set(\"jsonBody\", JSON.stringify(bodyToPost));",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "d21af9f8-1041-4c84-bc7b-19882473cfc3",
+								"exec": [
+									"pm.test(`Success! The transitioning from the start step to the ${pm.environment.get('stepName')} step is complete`, () => {",
+									"    pm.expect(true).to.be.true;   ",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{jsonBody}}\n"
+						},
+						"url": {
+							"raw": "https://{{tenantAPIDNS}}/{{adminAppSpaceId}}/lifecycle/1/entitylifecycles/{{entityLifecycleId}}",
+							"protocol": "https",
+							"host": [
+								"{{tenantAPIDNS}}"
+							],
+							"path": [
+								"{{adminAppSpaceId}}",
+								"lifecycle",
+								"1",
+								"entitylifecycles",
+								"{{entityLifecycleId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ab416c27-e6eb-47b6-aacb-dba54a216629",
+				"type": "text/javascript",
+				"exec": [
+					"class UrlEncoderBuilder {",
+					"    constructor(){",
+					"        this.url = ''",
+					"    }",
+					"    ",
+					"    add(key, value){",
+					"        if(this.url.length > 0){",
+					"            this.url = `${this.url}&${key}=${encodeURIComponent(value)}`;",
+					"        } else {",
+					"            this.url = `${key}=${encodeURIComponent(value)}`;",
+					"        }",
+					"        ",
+					"        return this;",
+					"    }",
+					"    ",
+					"    build(){ return this.url; }",
+					"}",
+					"",
+					"const echoPostRequest = {",
+					"    url: pm.environment.get('authURL'),",
+					"    method: 'POST',",
+					"    header: {",
+					"        'Content-Type': 'application/x-www-form-urlencoded'",
+					"    },",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: new UrlEncoderBuilder()",
+					"                .add('username', pm.environment.get('username'))",
+					"                .add('password', pm.environment.get('userPassword'))",
+					"                .add('grant_type', 'password')",
+					"                .add('client_id', 'chassi-api')",
+					"                .build()",
+					"    }",
+					"};",
+					"",
+					"",
+					"// console.log( echoPostRequest );",
+					"",
+					"",
+					"pm.sendRequest(echoPostRequest, function (err, res) {",
+					"    // console.log(err ? err : res.json());",
+					"    if (err === null) {",
+					"        var responseJson = res.json();",
+					"        pm.environment.set('accessToken', responseJson.access_token)",
+					"    }",
+					"});",
+					"",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "2e11e27c-b34a-4021-af15-4b4a2b2b3e8d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

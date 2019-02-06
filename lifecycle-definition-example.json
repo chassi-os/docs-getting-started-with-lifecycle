@@ -1,0 +1,178 @@
+{
+  "dateCreated": "2019-01-09T18:47:59.493Z",
+  "lastUpdated": "2019-01-09T18:48:13.479Z",
+  "lifecycleId": "1241c7c9-d6e5-48ac-81a8-b407a20fd8d8",
+  "lifecycleName": "Overall Tenant",
+  "lifecycleDescription": null,
+  "stepDictionary": [
+    {
+      "stepId": "396d460b-b260-48c4-bbcd-706418269b26",
+      "stepName": "Onboarding",
+      "stepDescription": null,
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": null,
+      "stepOwner": null,
+      "metadata": [
+        
+      ]
+    },
+    {
+      "stepId": "67b515fd-0627-4e2a-8325-5d347036664a",
+      "stepName": "Retention",
+      "stepDescription": "",
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": "days",
+      "stepOwner": "",
+      "metadata": [
+        
+      ]
+    },
+    {
+      "stepId": "36759176-f469-4b47-a3be-cebbf72fcb79",
+      "stepName": "Inactive",
+      "stepDescription": "",
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": "days",
+      "stepOwner": "",
+      "metadata": [
+        
+      ]
+    },
+    {
+      "stepId": "4db06744-34b8-431d-a6b1-7753317dce68",
+      "stepName": "Engagement",
+      "stepDescription": "",
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": "days",
+      "stepOwner": "",
+      "metadata": [
+        
+      ]
+    },
+    {
+      "stepId": "a01d04ee-a83d-4c99-bf77-0d34ac9f0387",
+      "stepName": "Adoption",
+      "stepDescription": "",
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": "days",
+      "stepOwner": "",
+      "metadata": [
+        
+      ]
+    },
+    {
+      "stepId": "12a833f6-11a2-492c-9e23-d30fa005afe2",
+      "stepName": "Expansion",
+      "stepDescription": "",
+      "stepWIPLimit": null,
+      "cycletimeLimit": null,
+      "cycletimeUnitType": "days",
+      "stepOwner": "",
+      "metadata": [
+        
+      ]
+    }
+  ],
+  "lifecycleVersions": [
+    {
+      "dateCreated": "2019-01-09T18:47:59.547Z",
+      "lastUpdated": "2019-01-09T18:52:10.137Z",
+      "lifecycleVersionId": "6f689f05-6ede-4b2a-bd4e-1a262074c6c1",
+      "versionNo": 1,
+      "versionName": null,
+      "startingStepId": "396d460b-b260-48c4-bbcd-706418269b26",
+      "steps": [
+        {
+          "stepId": "36759176-f469-4b47-a3be-cebbf72fcb79",
+          "nextSteps": [
+            "4db06744-34b8-431d-a6b1-7753317dce68"
+          ],
+          "stepName": "Inactive",
+          "stepType": "In_Progress",
+          "displayXPos": 0,
+          "displayYPos": 3
+        },
+        {
+          "stepId": "67b515fd-0627-4e2a-8325-5d347036664a",
+          "nextSteps": [
+            "12a833f6-11a2-492c-9e23-d30fa005afe2",
+            "36759176-f469-4b47-a3be-cebbf72fcb79"
+          ],
+          "stepName": "Retention",
+          "stepType": "In_Progress",
+          "displayXPos": 1,
+          "displayYPos": 1
+        },
+        {
+          "stepId": "4db06744-34b8-431d-a6b1-7753317dce68",
+          "nextSteps": [
+            "67b515fd-0627-4e2a-8325-5d347036664a",
+            "36759176-f469-4b47-a3be-cebbf72fcb79"
+          ],
+          "stepName": "Engagement",
+          "stepType": "In_Progress",
+          "displayXPos": 0,
+          "displayYPos": 1
+        },
+        {
+          "stepId": "12a833f6-11a2-492c-9e23-d30fa005afe2",
+          "nextSteps": [
+            "36759176-f469-4b47-a3be-cebbf72fcb79"
+          ],
+          "stepName": "Expansion",
+          "stepType": "In_Progress",
+          "displayXPos": 2,
+          "displayYPos": 1
+        },
+        {
+          "stepId": "396d460b-b260-48c4-bbcd-706418269b26",
+          "nextSteps": [
+            "a01d04ee-a83d-4c99-bf77-0d34ac9f0387"
+          ],
+          "stepName": "Onboarding",
+          "stepType": "Not_Started",
+          "displayXPos": -2,
+          "displayYPos": 1
+        },
+        {
+          "stepId": "a01d04ee-a83d-4c99-bf77-0d34ac9f0387",
+          "nextSteps": [
+            "4db06744-34b8-431d-a6b1-7753317dce68",
+            "36759176-f469-4b47-a3be-cebbf72fcb79"
+          ],
+          "stepName": "Adoption",
+          "stepType": "In_Progress",
+          "displayXPos": -1,
+          "displayYPos": 1
+        }
+      ],
+      "published": true,
+      "publishedAppSpacesList": [
+        {
+          "appSpaceId": "fac6e61f-0020-4897-a7f6-7309064fefd0",
+          "appSpaceName": "Experiment",
+          "publicationDate": "2019-01-09T18:52:10.088Z",
+          "inflightEntityLifecycleCount": 0,
+          "totalEntityLifecycleCount": 0
+        }
+      ],
+      "publicationDate": "2019-01-09T18:52:10.088Z",
+      "hasDependencies": false,
+      "metadata": [
+        
+      ]
+    }
+  ],
+  "lifecycleTagList": [
+    
+  ],
+  "metadata": [
+    
+  ],
+  "ableToDelete": false
+}
